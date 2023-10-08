@@ -153,7 +153,7 @@ class BinarySearchTree {
 		return this.left._findMin();
 	}
 
-	/* Depth-First Search: In-Order Traversal */
+	/* Depth-First Search: In-Order Traversal - array of values returned is sorted */
 	dfsInOrder(values = []) {
 		// First, process the left node recursively
 		if (this.left) {
@@ -234,5 +234,59 @@ class BinarySearchTree {
 		}
 
 		return values;
+	}
+
+	/* Returns the height of a tree */
+	getHeight(currentHeight = 0) {
+		// Base case
+		// If the current node doesn't have any children, return 'currentHeight'
+		if (!this.left && !this.right) return currentHeight;
+
+		// Recursive case
+		// Calculate new height value
+		const newHeight = currentHeight + 1;
+
+		// If the current node has no left child, recurse down the right subtree only, passing in 'newHeight'
+		if (!this.left) return this.right.getHeight(newHeight);
+
+		// If the current node has no right child, recurse down the left subtree only, passing in 'newHeight'
+		if (!this.right) return this.left.getHeight(newHeight);
+
+		// If both children exist, recurse down both subtrees, passing in 'newHeight'...
+		const leftHeight = this.left.getHeight(newHeight);
+		const rightHeight = this.right.getHeight(newHeight);
+		// Return the greater of the two heights
+		return Math.max(leftHeight, rightHeight);
+	}
+
+	/* Returns 'true' if this given binary tree is a BST, and 'false' otherwise */
+	isBST() {
+		// Use 'dfsInOrder() to traverse the tree
+		const values = this.dfsInOrder();
+
+		// Check if the values returned are sorted
+		for (let i = 1; i < values.length; i++) {
+			// Compare current and previous values, return 'false' if any are not in increasing order
+			if (values[i] < values[i - 1]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/* Returns the 'k'th largest value within a tree */
+	findKthLargestValue(k) {
+		// Use 'dfsInOrder() to traverse the tree
+		const values = this.dfsInOrder();
+		// Calculate desired index - 'k' from the end
+		const kthIndex = values.length - k;
+
+		// Ensure the index is within the bounds of the array
+		if (kthIndex >= 0) {
+			return values[kthIndex];
+		} else {
+			console.error("k value exceeds the size of the BST");
+		}
 	}
 }
